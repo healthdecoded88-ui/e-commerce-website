@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlushAway Admin Panel – Control Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=Cinzel:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { background: var(--off-white); padding-top: 80px; }
+    .admin-login { max-width: 400px; margin: 80px auto; background: white; border-radius: 24px; padding: 48px 40px; box-shadow: var(--shadow-lg); text-align: center; }
+    .admin-login h2 { font-family: var(--font-display); font-size: 2rem; color: var(--green-dark); margin-bottom: 8px; }
+    .admin-login p { font-size: 0.88rem; color: var(--text-light); margin-bottom: 32px; }
+    .admin-login input { width: 100%; padding: 12px 16px; border: 1.5px solid rgba(0,0,0,.1); border-radius: 10px; font-family: var(--font-body); font-size: 0.9rem; margin-bottom: 14px; outline: none; }
+    .admin-login input:focus { border-color: var(--green-mid); }
+    .btn-login { width: 100%; background: var(--green-dark); color: white; padding: 14px; border: none; border-radius: 999px; font-family: var(--font-body); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .btn-login:hover { background: var(--green-mid); }
+    .login-hint { margin-top: 16px; font-size: 0.78rem; color: var(--text-light); }
+    #adminPanelMain { display: none; }
+    .preview-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; color: var(--gold); text-decoration: none; }
+    .preview-link:hover { color: var(--gold-dark); }
+    .testimonial-editor-item { background: var(--off-white); border-radius: 12px; padding: 20px; margin-bottom: 14px; position: relative; }
+    .te-remove { position: absolute; top: 12px; right: 12px; background: #fee2e2; color: #b91c1c; border: none; border-radius: 999px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); }
+    .faq-editor-item { background: var(--off-white); border-radius: 12px; padding: 20px; margin-bottom: 14px; position: relative; }
+    .color-swatch-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .swatch { width: 44px; height: 44px; border-radius: 10px; border: 2px solid rgba(0,0,0,.1); cursor: pointer; transition: transform .2s; }
+    .swatch:hover { transform: scale(1.1); }
+    .export-btn { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--green-dark); border: none; border-radius: 999px; padding: 12px 28px; font-family: var(--font-body); font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: transform .2s; }
+    .export-btn:hover { transform: translateY(-2px); }
+    table.order-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    table.order-table th { background: var(--green-dark); color: white; padding: 12px 16px; text-align: left; font-weight: 600; }
+    table.order-table td { padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,.06); }
+    table.order-table tr:hover td { background: var(--cream); }
+    .status-badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .s-pending { background: #fef3c7; color: #92400e; }
+    .s-delivered { background: #d1fae5; color: #065f46; }
+    .s-processing { background: #dbeafe; color: #1e40af; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox" class="admin-login">
+  <div style="font-size:3rem;margin-bottom:12px">🌿</div>
+  <h2>Admin Panel</h2>
+  <p>Sign in to manage your FlushAway website</p>
+  <input type="text" id="loginUser" placeholder="Username" value="admin"/>
+  <input type="password" id="loginPass" placeholder="Password" value="flushaway123"/>
+  <button class="btn-login" onclick="doLogin()">Sign In</button>
+  <p class="login-hint">Demo credentials: admin / flushaway123</p>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanelMain">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <span style="font-size:2.5rem">🌿</span>
+      <div>
+        <h1>FlushAway Control Panel</h1>
+        <p>Edit website content, products, testimonials, FAQs & settings</p>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <a href="index.html" target="_blank" class="preview-link">🔗 Preview Website</a>
+        <button onclick="doLogout()" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);padding:8px 18px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-size:0.85rem">Logout</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row" style="margin-bottom:32px">
+      <div class="stat-box"><div class="stat-num">4</div><div class="stat-lbl">Products</div></div>
+      <div class="stat-box"><div class="stat-num">8</div><div class="stat-lbl">Ingredients</div></div>
+      <div class="stat-box"><div class="stat-num">4</div><div class="stat-lbl">Testimonials</div></div>
+      <div class="stat-box"><div class="stat-num">6</div><div class="stat-lbl">FAQs</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="hero" onclick="switchTab('hero')">🏠 Hero Section</button>
+      <button class="admin-tab" data-tab="products" onclick="switchTab('products')">📦 Products</button>
+      <button class="admin-tab" data-tab="testimonials" onclick="switchTab('testimonials')">⭐ Testimonials</button>
+      <button class="admin-tab" data-tab="faq" onclick="switchTab('faq')">❓ FAQs</button>
+      <button class="admin-tab" data-tab="contact" onclick="switchTab('contact')">📞 Contact Info</button>
+      <button class="admin-tab" data-tab="design" onclick="switchTab('design')">🎨 Design</button>
+      <button class="admin-tab" data-tab="orders" onclick="switchTab('orders')">🛒 Orders</button>
+    </div>
+
+    <!-- TAB: HERO -->
+    <div class="admin-content active" id="tab-hero">
+      <div class="admin-section-box">
+        <h3>Hero Section</h3>
+        <div class="admin-form-row">
+          <div class="admin-field full"><label>Hero Tagline (H1)</label><input type="text" id="heroTagline" value="Clean Your Gut Naturally"/></div>
+          <div class="admin-field full"><label>Hero Subtitle</label><textarea id="heroSubtitle">A time-tested Ayurvedic formula for gentle, effective digestive relief — no chemicals, no discomfort, just pure herbal power.</textarea></div>
+          <div class="admin-field"><label>CTA Button Text</label><input type="text" id="heroCTA" value="Order Now"/></div>
+          <div class="admin-field"><label>CTA Button Link</label><input type="text" id="heroLink" value="shop.html"/></div>
+          <div class="admin-field"><label>Hero Badge Text</label><input type="text" id="heroBadge" value="🌿 100% Ayurvedic & Natural"/></div>
+          <div class="admin-field"><label>Trust Strip Item 1</label><input type="text" value="✅ 100% Herbal"/></div>
+          <div class="admin-field"><label>Trust Strip Item 2</label><input type="text" value="🛡️ No Side Effects"/></div>
+          <div class="admin-field"><label>Trust Strip Item 3</label><input type="text" value="🏭 GMP Certified"/></div>
+          <div class="admin-field"><label>Trust Strip Item 4</label><input type="text" value="🌱 Ayurveda-Based"/></div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveSection('hero')">Save Changes</button>
+          <span class="save-status" id="status-hero">✅ Saved!</span>
+        </div>
+      </div>
+
+      <div class="admin-section-box">
+        <h3>Brand / SEO</h3>
+        <div class="admin-form-row">
+          <div class="admin-field"><label>Brand Name</label><input type="text" value="FlushAway"/></div>
+          <div class="admin-field"><label>Tagline</label><input type="text" value="Clean Your Gut Naturally"/></div>
+          <div class="admin-field"><label>WhatsApp Number</label><input type="text" id="waNumber" value="+91 99999 99999"/></div>
+          <div class="admin-field"><label>WhatsApp Link</label><input type="text" value="https://wa.me/919999999999"/></div>
+          <div class="admin-field full"><label>SEO Meta Description</label><textarea style="height:60px">FlushAway is a 100% herbal Ayurvedic digestive supplement. Relieve constipation, improve digestion, and detox naturally.</textarea></div>
+          <div class="admin-field full"><label>SEO Keywords</label><input type="text" value="herbal constipation relief, ayurvedic digestive supplement, haritaki, senna tablets, gut health"/></div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveSection('brand')">Save Changes</button>
+          <span class="save-status" id="status-brand">✅ Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: PRODUCTS -->
+    <div class="admin-content" id="tab-products">
+      <div class="admin-section-box">
+        <h3>Products</h3>
+        <div id="productList">
+          <div class="product-list-item">
+            <div class="pli-icon">🌿</div>
+            <div class="pli-info"><strong>Granules – Gentle</strong><span>₹199 / 100g Pack | Gentle formula for daily use</span></div>
+            <div class="pli-actions">
+              <button class="btn-edit" onclick="editProduct(0)">✏️ Edit</button>
+              <button class="btn-del" onclick="delProduct(0)">🗑 Remove</button>
+            </div>
+          </div>
+          <div class="product-list-item">
+            <div class="pli-icon">🌊</div>
+            <div class="pli-info"><strong>Granules – Strong</strong><span>₹249 / 100g Pack | Powerful with Senna & Castor Oil</span></div>
+            <div class="pli-actions">
+              <button class="btn-edit" onclick="editProduct(1)">✏️ Edit</button>
+              <button class="btn-del" onclick="delProduct(1)">🗑 Remove</button>
+            </div>
+          </div>
+          <div class="product-list-item">
+            <div class="pli-icon">💊</div>
+            <div class="pli-info"><strong>Tablets – Gentle</strong><span>₹229 / 30 Tablets | Convenient for travel</span></div>
+            <div class="pli-actions">
+              <button class="btn-edit" onclick="editProduct(2)">✏️ Edit</button>
+              <button class="btn-del" onclick="delProduct(2)">🗑 Remove</button>
+            </div>
+          </div>
+          <div class="product-list-item">
+            <div class="pli-icon">🔴</div>
+            <div class="pli-info"><strong>Tablets – Strong</strong><span>₹279 / 30 Tablets | Maximum overnight relief</span></div>
+            <div class="pli-actions">
+              <button class="btn-edit" onclick="editProduct(3)">✏️ Edit</button>
+              <button class="btn-del" onclick="delProduct(3)">🗑 Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Edit Product Form -->
+      <div class="admin-section-box" id="productEditForm" style="display:none">
+        <h3 id="productFormTitle">Edit Product</h3>
+        <div class="admin-form-row">
+          <div class="admin-field"><label>Product Name</label><input type="text" id="pName"/></div>
+          <div class="admin-field"><label>Variant Type</label><select id="pVariant"><option>Gentle</option><option>Strong</option></select></div>
+          <div class="admin-field"><label>Form</label><select id="pForm"><option>Granules</option><option>Tablets</option></select></div>
+          <div class="admin-field"><label>Price</label><input type="text" id="pPrice"/></div>
+          <div class="admin-field"><label>Pack Size</label><input type="text" id="pPack"/></div>
+          <div class="admin-field"><label>Emoji Icon</label><input type="text" id="pIcon" maxlength="4"/></div>
+          <div class="admin-field full"><label>Short Description</label><textarea id="pDesc" style="height:60px"></textarea></div>
+          <div class="admin-field full"><label>WhatsApp Order Text</label><input type="text" id="pWaText"/></div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveProduct()">Save Product</button>
+          <button onclick="cancelEdit()" style="background:transparent;border:none;color:var(--text-light);cursor:pointer;font-family:var(--font-body);font-size:.9rem">Cancel</button>
+          <span class="save-status" id="status-product">✅ Product Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: TESTIMONIALS -->
+    <div class="admin-content" id="tab-testimonials">
+      <div class="admin-section-box">
+        <h3>Customer Testimonials <button class="btn-add" onclick="addTestimonial()">+ Add New</button></h3>
+        <div id="testimonialList">
+          <!-- Rendered by JS -->
+        </div>
+        <div class="admin-save-row" style="margin-top:24px">
+          <button class="btn-save" onclick="saveSection('testi')">Save All Testimonials</button>
+          <span class="save-status" id="status-testi">✅ Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: FAQ -->
+    <div class="admin-content" id="tab-faq">
+      <div class="admin-section-box">
+        <h3>FAQs <button class="btn-add" onclick="addFaq()">+ Add FAQ</button></h3>
+        <div id="faqList"></div>
+        <div class="admin-save-row" style="margin-top:24px">
+          <button class="btn-save" onclick="saveSection('faq')">Save All FAQs</button>
+          <span class="save-status" id="status-faq">✅ Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: CONTACT INFO -->
+    <div class="admin-content" id="tab-contact">
+      <div class="admin-section-box">
+        <h3>Contact Information</h3>
+        <div class="admin-form-row">
+          <div class="admin-field"><label>Phone Number</label><input type="text" value="+91 99999 99999"/></div>
+          <div class="admin-field"><label>WhatsApp Number</label><input type="text" value="+91 99999 99999"/></div>
+          <div class="admin-field"><label>Email Address</label><input type="email" value="hello@flushaway.in"/></div>
+          <div class="admin-field"><label>Business Hours</label><input type="text" value="Mon–Sat: 9AM – 6PM"/></div>
+          <div class="admin-field full"><label>Address</label><textarea style="height:60px">FlushAway Wellness Pvt Ltd, Mumbai, Maharashtra – 400001</textarea></div>
+          <div class="admin-field"><label>Instagram URL</label><input type="text" value="https://instagram.com/flushaway"/></div>
+          <div class="admin-field"><label>Facebook URL</label><input type="text" value="https://facebook.com/flushaway"/></div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveSection('contact')">Save Contact Info</button>
+          <span class="save-status" id="status-contact">✅ Saved!</span>
+        </div>
+      </div>
+      <div class="admin-section-box">
+        <h3>Shipping Settings</h3>
+        <div class="admin-form-row">
+          <div class="admin-field"><label>Free Shipping Above (₹)</label><input type="number" value="499"/></div>
+          <div class="admin-field"><label>Delivery Days</label><input type="text" value="3–5 business days"/></div>
+          <div class="admin-field"><label>COD Available?</label><select><option>Yes</option><option>No</option></select></div>
+          <div class="admin-field"><label>Return Policy (days)</label><input type="number" value="7"/></div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveSection('shipping')">Save Shipping</button>
+          <span class="save-status" id="status-shipping">✅ Saved!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: DESIGN -->
+    <div class="admin-content" id="tab-design">
+      <div class="admin-section-box">
+        <h3>Brand Colors</h3>
+        <div class="admin-form-row">
+          <div class="admin-field">
+            <label>Primary Green (Dark)</label>
+            <div class="color-row">
+              <input type="color" id="adminColorGreen" value="#1a3d2b"/>
+              <div class="color-preview" id="prevGreen" style="background:#1a3d2b"></div>
+              <input type="text" value="#1a3d2b" style="flex:1"/>
+            </div>
+          </div>
+          <div class="admin-field">
+            <label>Accent Gold</label>
+            <div class="color-row">
+              <input type="color" id="adminColorGold" value="#c9a84c"/>
+              <div class="color-preview" id="prevGold" style="background:#c9a84c"></div>
+              <input type="text" value="#c9a84c" style="flex:1"/>
+            </div>
+          </div>
+          <div class="admin-field">
+            <label>Background</label>
+            <div class="color-row">
+              <input type="color" id="adminColorBg" value="#fafaf7"/>
+              <div class="color-preview" id="prevBg" style="background:#fafaf7"></div>
+              <input type="text" value="#fafaf7" style="flex:1"/>
+            </div>
+          </div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveSection('design')">Apply Colors</button>
+          <span class="save-status" id="status-design">✅ Colors Applied!</span>
+        </div>
+      </div>
+      <div class="admin-section-box">
+        <h3>Typography</h3>
+        <div class="admin-form-row">
+          <div class="admin-field"><label>Display Font</label><select><option>Cormorant Garamond</option><option>Playfair Display</option><option>Cinzel</option><option>Lora</option></select></div>
+          <div class="admin-field"><label>Body Font</label><select><option>DM Sans</option><option>Poppins</option><option>Nunito</option><option>Source Sans Pro</option></select></div>
+        </div>
+        <div class="admin-save-row">
+          <button class="btn-save" onclick="saveSection('typography')">Save Typography</button>
+          <span class="save-status" id="status-typography">✅ Saved!</span>
+        </div>
+      </div>
+      <div class="admin-section-box">
+        <h3>Export Website Code</h3>
+        <p style="font-size:.88rem;color:var(--text-light);margin-bottom:20px">Download all 5 website files (HTML, CSS, JS) as a ZIP-ready package after making your changes.</p>
+        <button class="export-btn" onclick="alert('In a live server environment, this would zip and download your customized website files.')">⬇️ Export Website Files</button>
+      </div>
+    </div>
+
+    <!-- TAB: ORDERS -->
+    <div class="admin-content" id="tab-orders">
+      <div class="admin-section-box">
+        <h3>Recent Orders (Demo)</h3>
+        <p style="font-size:.85rem;color:var(--text-light);margin-bottom:20px">Connect your WhatsApp Business API or payment gateway to track real orders here.</p>
+        <table class="order-table">
+          <thead>
+            <tr><th>#</th><th>Customer</th><th>Product</th><th>Amount</th><th>Date</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>#1001</td><td>Priya Sharma</td><td>Granules – Gentle</td><td>₹199</td><td>Apr 12, 2024</td><td><span class="status-badge s-delivered">Delivered</span></td></tr>
+            <tr><td>#1002</td><td>Rajan Mehta</td><td>Tablets – Strong</td><td>₹279</td><td>Apr 13, 2024</td><td><span class="status-badge s-processing">Processing</span></td></tr>
+            <tr><td>#1003</td><td>Anjali Nair</td><td>Granules – Gentle</td><td>₹199</td><td>Apr 13, 2024</td><td><span class="status-badge s-pending">Pending</span></td></tr>
+            <tr><td>#1004</td><td>Suresh Patel</td><td>Tablets – Gentle x2</td><td>₹458</td><td>Apr 14, 2024</td><td><span class="status-badge s-delivered">Delivered</span></td></tr>
+            <tr><td>#1005</td><td>Meera Joshi</td><td>Granules – Strong</td><td>₹249</td><td>Apr 14, 2024</td><td><span class="status-badge s-processing">Processing</span></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.78rem;color:var(--text-light);margin-top:16px">💡 Tip: Integrate with Razorpay, Shiprocket, or WhatsApp Business API for live order tracking.</p>
+      </div>
+    </div>
+
+  </div><!-- /admin-panel -->
+</div><!-- /adminPanelMain -->
+
+<script src="main.js"></script>
+<script>
+// ===== AUTH =====
+function doLogin() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  if (u === 'admin' && p === 'flushaway123') {
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('adminPanelMain').style.display = 'block';
+    initAdmin();
+  } else {
+    alert('Invalid credentials. Try admin / flushaway123');
+  }
+}
+function doLogout() {
+  document.getElementById('loginBox').style.display = 'block';
+  document.getElementById('adminPanelMain').style.display = 'none';
+}
+
+// ===== TESTIMONIALS =====
+const testimonials = [
+  { stars: 5, text: "I've had constipation issues for years. FlushAway Gentle Tablets changed everything. Finally feeling light and comfortable every morning!", name: "Priya Sharma", location: "Mumbai, Maharashtra" },
+  { stars: 5, text: "The Strong granules worked overnight for me after 3 days of discomfort. No cramps, just smooth relief. Completely natural.", name: "Rajan Mehta", location: "Ahmedabad, Gujarat" },
+  { stars: 5, text: "My bloating used to be so bad after every meal. After 2 weeks of FlushAway Gentle Granules, my stomach feels flat.", name: "Anjali Nair", location: "Bengaluru, Karnataka" },
+  { stars: 4, text: "Good product, completely herbal. Gentle tablets are perfect for my elderly mother. No side effects at all.", name: "Suresh Patel", location: "Surat, Gujarat" }
+];
+function renderTestimonials() {
+  const el = document.getElementById('testimonialList');
+  el.innerHTML = testimonials.map((t, i) => `
+    <div class="testimonial-editor-item">
+      <button class="te-remove" onclick="removeTestimonial(${i})">✕ Remove</button>
+      <div class="admin-form-row">
+        <div class="admin-field"><label>Customer Name</label><input type="text" value="${t.name}" onchange="testimonials[${i}].name=this.value"/></div>
+        <div class="admin-field"><label>Location</label><input type="text" value="${t.location}" onchange="testimonials[${i}].location=this.value"/></div>
+        <div class="admin-field"><label>Stars (1-5)</label><select onchange="testimonials[${i}].stars=parseInt(this.value)">${[1,2,3,4,5].map(s=>`<option ${s===t.stars?'selected':''}>${s}</option>`).join('')}</select></div>
+        <div class="admin-field full"><label>Review Text</label><textarea onchange="testimonials[${i}].text=this.value">${t.text}</textarea></div>
+      </div>
+    </div>`).join('');
+}
+function addTestimonial() {
+  testimonials.push({ stars: 5, text: "Great product!", name: "New Customer", location: "India" });
+  renderTestimonials();
+}
+function removeTestimonial(i) {
+  testimonials.splice(i, 1);
+  renderTestimonials();
+}
+
+// ===== FAQs =====
+const faqs = [
+  { q: "Is FlushAway safe for daily use?", a: "The Gentle variants are suitable for daily use. The Strong variants are recommended for short-term use (1–3 days)." },
+  { q: "How long before I see results?", a: "Most users experience relief within 6–8 hours. For chronic constipation, consistent use over 2–4 weeks brings lasting improvements." },
+  { q: "What is the difference between Granules and Tablets?", a: "Both contain the same formula. Granules dissolve in water and may act faster. Tablets are convenient for travel with precise dosing." },
+  { q: "Are there any side effects?", a: "FlushAway is 100% natural. When used as directed, it is generally well-tolerated. Consult a doctor if pregnant or on medication." },
+  { q: "Which variant should I choose?", a: "Start with Gentle for mild constipation. Choose Strong for chronic constipation or a gut cleanse." },
+  { q: "How can I order?", a: "Order via our Shop page or directly on WhatsApp. We deliver across India. Cash on Delivery available." }
+];
+function renderFaqs() {
+  const el = document.getElementById('faqList');
+  el.innerHTML = faqs.map((f, i) => `
+    <div class="faq-editor-item">
+      <button class="te-remove" onclick="removeFaq(${i})">✕ Remove</button>
+      <div class="admin-form-row">
+        <div class="admin-field full"><label>Question</label><input type="text" value="${f.q}" onchange="faqs[${i}].q=this.value"/></div>
+        <div class="admin-field full"><label>Answer</label><textarea onchange="faqs[${i}].a=this.value">${f.a}</textarea></div>
+      </div>
+    </div>`).join('');
+}
+function addFaq() {
+  faqs.push({ q: "New Question?", a: "Your answer here." });
+  renderFaqs();
+}
+function removeFaq(i) {
+  faqs.splice(i, 1);
+  renderFaqs();
+}
+
+// ===== PRODUCT EDIT =====
+let editIdx = -1;
+const products = [
+  { name: 'Granules – Gentle', variant: 'Gentle', form: 'Granules', price: '₹199', pack: '100g Pack', icon: '🌿', desc: 'Dissolve in warm water for soothing, mild digestive relief.', wa: 'Hi! I want to order FlushAway Granules Gentle.' },
+  { name: 'Granules – Strong', variant: 'Strong', form: 'Granules', price: '₹249', pack: '100g Pack', icon: '🌊', desc: 'Powerful overnight cleanse with Senna & Castor Oil.', wa: 'Hi! I want to order FlushAway Granules Strong.' },
+  { name: 'Tablets – Gentle', variant: 'Gentle', form: 'Tablets', price: '₹229', pack: '30 Tablets', icon: '💊', desc: 'Convenient tablet form. Easy to carry with precise dosage.', wa: 'Hi! I want to order FlushAway Tablets Gentle.' },
+  { name: 'Tablets – Strong', variant: 'Strong', form: 'Tablets', price: '₹279', pack: '30 Tablets', icon: '🔴', desc: 'Maximum relief in tablet form. Targeted overnight action.', wa: 'Hi! I want to order FlushAway Tablets Strong.' }
+];
+function editProduct(i) {
+  editIdx = i;
+  const p = products[i];
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pPack').value = p.pack;
+  document.getElementById('pIcon').value = p.icon;
+  document.getElementById('pDesc').value = p.desc;
+  document.getElementById('pWaText').value = p.wa;
+  document.getElementById('productFormTitle').textContent = `Edit: ${p.name}`;
+  document.getElementById('productEditForm').style.display = 'block';
+  document.getElementById('productEditForm').scrollIntoView({ behavior: 'smooth' });
+}
+function saveProduct() {
+  if (editIdx >= 0) {
+    products[editIdx].name = document.getElementById('pName').value;
+    products[editIdx].price = document.getElementById('pPrice').value;
+    products[editIdx].pack = document.getElementById('pPack').value;
+    products[editIdx].icon = document.getElementById('pIcon').value;
+    products[editIdx].desc = document.getElementById('pDesc').value;
+    products[editIdx].wa = document.getElementById('pWaText').value;
+    saveSection('product');
+    cancelEdit();
+  }
+}
+function cancelEdit() {
+  document.getElementById('productEditForm').style.display = 'none';
+  editIdx = -1;
+}
+function delProduct(i) {
+  if (confirm(`Remove "${products[i].name}"?`)) {
+    products.splice(i, 1);
+    alert('Product removed from list.');
+  }
+}
+
+// ===== INIT =====
+function initAdmin() {
+  renderTestimonials();
+  renderFaqs();
+  updateColorPreview('adminColorGreen', 'prevGreen');
+  updateColorPreview('adminColorGold', 'prevGold');
+  updateColorPreview('adminColorBg', 'prevBg');
+}
+
+// Reuse from main.js
+function updateColorPreview(inputId, previewId) {
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+  if (input && preview) {
+    preview.style.background = input.value;
+    input.addEventListener('input', () => { preview.style.background = input.value; });
+  }
+}
+
+// Enter key login
+document.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter' && document.getElementById('loginBox').style.display !== 'none') doLogin();
+});
+</script>
+</body>
+</html>
